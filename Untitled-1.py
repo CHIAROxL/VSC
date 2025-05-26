@@ -46,3 +46,4 @@ elif scelta == "a":
     concentrazione_acido = float(input("digita la concentrazione molare (separando i decimali con il punto): "))
     composto = pcp.get_properties("HCl", "cid")
 '''
+pippo
