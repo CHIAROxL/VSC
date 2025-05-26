@@ -24,8 +24,7 @@ import math
 #print(list(set(sostanza2.elements))) #stampa tutti gli elementi una sola volta
 #print(dict(Counter(sostanza2.elements))) #stampa le quantità di ogni elemento
 #print(sostanza2._atoms) #stampa le quantità di ogni elemento e le posizioni
-composto = pcp.get_properties("HCl", "cid")
-'''
+
 scelta = input("digita \"A\" per un acido forte, \"B\" per una base forte, " \
 "a\" per un acido debole, \"b\" per una base debole : ")
 
@@ -44,5 +43,10 @@ elif scelta == "B":
 elif scelta == "a":
     dissociazioni = int(input("quanto vale \"Z\"?"))
     concentrazione_acido = float(input("digita la concentrazione molare (separando i decimali con il punto): "))
-    composto = pcp.get_properties("HCl", "cid")
-'''
+    costante = input("hai la constante acida o basica? ")
+    if costante == "acida" or "Acida":
+        costante_acida = float(input("inserisci la costante acida: "))
+        concentrazione_idronio = math.sqrt(concentrazione_acido * costante_acida)
+        pH = round(-math.log10(concentrazione_idronio), 2)
+    elif costante == "basica" or "Basica":
+        costante_basica = float(input("inserisci la costante basica: "))
