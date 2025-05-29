@@ -122,7 +122,7 @@ def main():
         carattere_analita = str(input("l'analita è un acido o una base? "))
         potenza_analita = str(input("l'analita è forte o debole? "))
         concentrazione_analita = float(input("quant'è la normalità di analita (separa i decimali con il punto)? "))
-        volume_analita = float(input("quant'è il volume di analita in litri (separa i decimali con il punto)? "))
+        volume_analita = float(input("quant'è il volume di analita in mL (separa i decimali con il punto)? "))
         potenza_titolante = str(input("il titolante è forte o debole? "))
         concentrazione_titolante = float(input("quant'è la normalità del titolante (separa i decimali con il punto)? "))
         numero_titolanti = int(input("con quanti volumi vuoi titolare? "))
@@ -133,9 +133,10 @@ def main():
         
         volumi_titolante = []
         for i in range(numero_titolanti):
-            volumi_titolante.append(float(input("inserisci il #" + str(i+1) + " volume di titolante (separa i decimali con il punto): ")))
+            volumi_titolante.append(float(input("inserisci il #" + str(i+1) + " volume di titolante (separa i decimali con il punto): "))/1000)
 
-        
+        volume_analita = volume_analita / 1000
+        moli_analita = concentrazione_analita*volume_analita
         if carattere_analita == "acido":
 
             
@@ -154,15 +155,15 @@ def main():
                         if moli_analita_residue > 0:
                             concentrazione_analita = moli_analita_residue/(volume_analita + volumi_titolante[i])
                             pH = pH_acido_forte(concentrazione_analita)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                         elif moli_analita_residue < 0:
                             concentrazione_base = -moli_analita_residue/(volume_analita + volumi_titolante[i])
                             pH = pH_base_forte(concentrazione_base)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                         else:
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è 7")
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è 7")
 
                 elif potenza_titolante == "debole":
                     moli_analita = concentrazione_analita*volume_analita
@@ -180,25 +181,24 @@ def main():
                             concentrazione_sale_acido = moli_titolante/(volume_analita + volumi_titolante[i])
                             idronio_totale = concentrazione_acido + c_idronio_ac(concentrazione_sale_acido, Ka)
                             pH = pH_acido_forte(idronio_totale)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
                             
                         elif moli_analita_residue < 0:
                             concentrazione_base = -moli_analita_residue/(volume_analita + volumi_titolante[i])
                             concentrazione_sale_acido = moli_analita/(volume_analita + volumi_titolante[i])
                             pH = pH_tampone_basico(concentrazione_sale_acido, concentrazione_base, Kb)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                         else:
                             concentrazione_sale_acido = moli_analita/(volume_analita + volumi_titolante[i])
                             pH = pH_acido_debole(concentrazione_sale_acido, Ka)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
             elif potenza_analita == "debole":
 
                 if potenza_titolante == "forte":
                     Ka = float(input("quanto vale la Ka1 dell'analita (es. 1.8e-5)? "))
                     Kb = 10e-14/Ka
-                    moli_analita = concentrazione_analita*volume_analita
 
                     #analita acido debole, titolante base forte
                     for i in range(numero_titolanti):
@@ -210,21 +210,23 @@ def main():
                             concentrazione_acido = moli_analita_residue/(volume_analita + volumi_titolante[i])
                             concentrazione_sale_basico = moli_titolante/(volume_analita + volumi_titolante[i])
                             pH = pH_tampone_acido(concentrazione_acido, concentrazione_sale_basico, Ka)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                         elif moli_analita_residue < 0:
                             concentrazione_base = -moli_analita_residue/(volume_analita + volumi_titolante[i])
                             concentrazione_sale_basico = moli_analita/(volume_analita + volumi_titolante[i])
                             concentrazione_idrossido = concentrazione_base + float(c_idrossido_bc(concentrazione_sale_basico, Kb))
                             pH = pH_base_forte(concentrazione_idrossido)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                         else:
                             concentrazione_sale_basico = moli_analita/(volume_analita + volumi_titolante[i])
                             pH = pH_base_debole(concentrazione_sale_basico, Kb)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                 elif potenza_titolante == "debole":
+                    Ka_analita = float(input("quanto vale la Ka dell'analita (es. 1.8e-5)? "))
+                    Kb_titolante = float(input("quanto vale la Kb del titolante (es. 1.8e-5)? "))
 
                     #analita acido debole, titolante basico debole
                     for i in range(numero_titolanti):
@@ -235,36 +237,171 @@ def main():
                         if moli_analita_residue > 0:
                             concentrazione_analita = moli_analita_residue/(volume_analita + volumi_titolante[i])
                             concentrazione_sale = moli_titolante/(volume_analita + volumi_titolante[i])
-                            concentrazione_base_prodotta, concentrazione_acido_prodotto = concentrazione_sale
-                            concentrazione_idronio = c_idronio_ac(concentrazione_acido_prodotto, Ka)
-                            pH = pH_tampone_acido(concentrazione_analita + concentrazione_idronio, concentrazione_base_prodotta - concentrazione_idronio, Ka)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            concentrazione_base_prodotta = concentrazione_sale
+                            concentrazione_acido_prodotto = concentrazione_sale
+                            concentrazione_idronio = c_idronio_ac(concentrazione_acido_prodotto, Ka_analita)
+                            pH = pH_tampone_acido(concentrazione_analita + concentrazione_idronio, concentrazione_base_prodotta - concentrazione_idronio, Ka_analita)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                         elif moli_analita_residue < 0:
                             concentrazione_titolante = -moli_analita_residue/(volume_analita + volumi_titolante[i])
                             concentrazione_sale = moli_analita/(volume_analita + volumi_titolante[i])
-                            concentrazione_base_prodotta, concentrazione_acido_prodotto = concentrazione_sale
-                            concentrazione_idrossido = c_idrossido_bc(concentrazione_base_prodotta, Kb)
-                            pH = pH_tampone_basico(concentrazione_acido_prodotto, concentrazione_titolante, Kb)
-                            print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                            concentrazione_base_prodotta = concentrazione_sale
+                            concentrazione_acido_prodotto = concentrazione_sale
+                            concentrazione_idrossido = c_idrossido_bc(concentrazione_base_prodotta, Kb_titolante)
+                            pH = pH_tampone_basico(concentrazione_acido_prodotto, concentrazione_titolante, Kb_titolante)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                         else:
                             concentrazione_sale = moli_analita/(volume_analita + volumi_titolante[i])
-                            concentrazione_acido_prodotto, concentrazione_base_prodotta = concentrazione_sale
-                            concentrazione_idronio = c_idronio_ac(concentrazione_acido_prodotto, Ka)
-                            concentrazione_idrossido = c_idrossido_bc(concentrazione_base_prodotta, Kb)
+                            concentrazione_acido_prodotto = concentrazione_sale
+                            concentrazione_base_prodotta = concentrazione_sale
+                            concentrazione_idronio = c_idronio_ac(concentrazione_acido_prodotto, Ka_analita)
+                            concentrazione_idrossido = c_idrossido_bc(concentrazione_base_prodotta, Kb_titolante)
                             idronio_rimanente = concentrazione_idronio - concentrazione_idrossido
 
                             if idronio_rimanente > 0:
                                 pH = pH_acido_forte(idronio_rimanente)
-                                print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                                print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
 
                             elif idronio_rimanente < 0:
                                 pH = pH_base_forte(-idronio_rimanente)
-                                print("il pH con " + str(volumi_titolante[i]) + "L di titolante è " + str(round(pH, 1)))
+                                print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
                             
                             else:
-                                print("il pH con " + str(volumi_titolante[i]) + "L di titolante è 7")
+                                print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è 7")
+
+        elif carattere_analita == "base":
+
+            if potenza_analita == "forte":
+
+                if potenza_titolante == "forte":
+
+                    #analita base forte, titolante acido forte
+                    for i in range(numero_titolanti):
+
+                        moli_titolante = concentrazione_titolante*volumi_titolante[i]
+                        moli_analita_residue = moli_analita-moli_titolante
+
+                        if moli_analita_residue > 0:
+                            concentrazione_analita_residuo = moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            pH = pH_base_forte(concentrazione_analita_residuo)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                        elif moli_analita_residue < 0:
+                            concentrazione_titolante_residuo = -moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            pH = pH_acido_forte(concentrazione_titolante_residuo)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                        else:
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è 7")
+
+                elif potenza_titolante == "debole":
+                    moli_analita = concentrazione_analita*volume_analita
+                    Ka = float(input("quanto vale la Ka1 del titolante (es. 1.8e-5)? "))
+                    Kb = 10e-14/Ka
+                    
+                    #analita base forte, titolante acido debole
+                    for i in range(numero_titolanti):
+                        moli_titolante = concentrazione_titolante*volumi_titolante[i]
+                        moli_analita_residue = moli_analita-moli_titolante
+
+                        if moli_analita_residue > 0:
+                            concentrazione_analita_residuo = moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            concentrazione_sale_basico = moli_titolante/(volume_analita + volumi_titolante[i])
+                            idrossido_totale = concentrazione_analita_residuo + c_idronio_ac(concentrazione_sale_basico, Kb)
+                            pH = pH_base_forte(idrossido_totale)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+                                
+                        elif moli_analita_residue < 0:
+                            concentrazione_titolante = -moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            concentrazione_sale_basico = moli_analita/(volume_analita + volumi_titolante[i])
+                            pH = pH_tampone_basico(concentrazione_sale_basico, concentrazione_titolante, Ka)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                        else:
+                            concentrazione_sale_basico = moli_analita/(volume_analita + volumi_titolante[i])
+                            pH = pH_base_debole(concentrazione_sale_basico, Kb)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+            if potenza_analita == "debole":
+
+                if potenza_titolante == "forte":
+
+                    #analita base debole, titolante acido forte
+                    Kb = float(input("quanto vale la Kb1 dell'analita (es. 1.8e-5)? "))
+                    Ka = 10e-14/Kb
+
+                    for i in range(numero_titolanti):
+
+                        moli_titolante = concentrazione_titolante*volumi_titolante[i]
+                        moli_analita_residue = moli_analita-moli_titolante
+
+                        if moli_analita_residue > 0:
+                            concentrazione_analita_residuo = moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            concentrazione_sale_acido = moli_titolante/(volume_analita + volumi_titolante[i])
+                            pH = pH_tampone_basico(concentrazione_analita_residuo, concentrazione_sale_acido, Kb)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                        elif moli_analita_residue < 0:
+                            concentrazione_titolante = -moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            concentrazione_sale_acido = moli_analita/(volume_analita + volumi_titolante[i])
+                            concentrazione_idronio = concentrazione_titolante + float(c_idronio_ac(concentrazione_sale_acido, Ka))
+                            pH = pH_acido_forte(concentrazione_idronio)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                        else:
+                            concentrazione_sale_acido = moli_analita/(volume_analita + volumi_titolante[i])
+                            pH = pH_acido_debole(concentrazione_sale_acido, Ka)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                elif potenza_titolante == "debole":
+                    Kb_analita = float(input("quanto vale la Kb dell'analita (es. 1.8e-5)? "))
+                    Ka_titolante = float(input("quanto vale la Ka del titolante (es. 1.8e-5)? "))
+
+                    #analita base debole, titolante acido debole
+                    for i in range(numero_titolanti):
+
+                        moli_titolante = concentrazione_titolante*volumi_titolante[i]
+                        moli_analita_residue = moli_analita-moli_titolante
+
+                        if moli_analita_residue > 0:
+                            concentrazione_analita_residuo = moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            concentrazione_sale = moli_titolante/(volume_analita + volumi_titolante[i])
+                            concentrazione_base_prodotta = concentrazione_sale
+                            concentrazione_acido_prodotto = concentrazione_sale
+                            concentrazione_idronio = c_idronio_ac(concentrazione_acido_prodotto, Ka_titolante)
+                            pH = pH_tampone_acido(concentrazione_titolante + concentrazione_idronio, concentrazione_base_prodotta - concentrazione_idronio, Ka_titolante)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                        elif moli_analita_residue < 0:
+                            concentrazione_titolante = -moli_analita_residue/(volume_analita + volumi_titolante[i])
+                            concentrazione_sale = moli_analita/(volume_analita + volumi_titolante[i])
+                            concentrazione_base_prodotta = concentrazione_sale
+                            concentrazione_acido_prodotto = concentrazione_sale
+                            concentrazione_idrossido = c_idrossido_bc(concentrazione_base_prodotta, Kb_analita)
+                            pH = pH_tampone_basico(concentrazione_acido_prodotto, concentrazione_analita, Kb_analita)
+                            print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                        else:
+                            concentrazione_sale = moli_analita/(volume_analita + volumi_titolante[i])
+                            concentrazione_acido_prodotto = concentrazione_sale
+                            concentrazione_base_prodotta = concentrazione_sale
+                            concentrazione_idronio = c_idronio_ac(concentrazione_acido_prodotto, Ka_titolante)
+                            concentrazione_idrossido = c_idrossido_bc(concentrazione_base_prodotta, Kb_analita)
+                            idronio_rimanente = concentrazione_idronio - concentrazione_idrossido
+
+                            if idronio_rimanente > 0:
+                                pH = pH_acido_forte(idronio_rimanente)
+                                print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+
+                            elif idronio_rimanente < 0:
+                                pH = pH_base_forte(-idronio_rimanente)
+                                print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è " + str(round(pH, 1)))
+                            
+                            else:
+                                print("il pH con " + str(volumi_titolante[i]*1000) + "mL di titolante è 7")
+
 
     else:
         raise if_non_soddisfatto("la condizione non è stata soddisfatta; interruzione del programma")
